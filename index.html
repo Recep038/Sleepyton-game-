@@ -22,4 +22,164 @@
         }
 
         /* Ana Ejderha Resmi */
-        .dragon-container { position: relative; width: 200px; height: 20
+        .dragon-container { position: relative; width: 200px; height: 200px; margin: 30px auto; }
+        .dragon-img { 
+            width: 100%; height: 100%; border-radius: 50%; 
+            border: 5px solid #38bdf8; 
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4);
+            object-fit: cover;
+        }
+
+        /* Alt Menü (Navigasyon) */
+        .nav-bar { 
+            position: fixed; bottom: 0; width: 100%; background: #1e293b; 
+            display: flex; justify-content: space-around; padding: 15px 0; 
+            border-top: 2px solid #334155; z-index: 100;
+        }
+        .nav-item { color: #94a3b8; text-decoration: none; font-size: 12px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.2s; }
+        .nav-item.active-nav { color: #38bdf8; transform: translateY(-5px); }
+        .nav-item i { font-size: 24px; margin-bottom: 5px; }
+
+        /* Mağaza Kartları */
+        .shop-card { background: #1e293b; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+        .btn { 
+            background: #38bdf8; color: #0f172a; border: none; padding: 12px; 
+            border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer;
+            transition: 0.2s; margin-top: 10px;
+        }
+        .btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="page-mine" class="page active">
+        <div class="header-card">
+            <h2 style="margin:0; color:#38bdf8;">💤 SleepyTon</h2>
+            <div style="font-size: 28px; font-weight: bold; margin: 10px 0;">
+                <span id="bakiye">0.00</span> <span style="font-size:16px; color:#94a3b8;">💎</span>
+            </div>
+            <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/saat</div>
+        </div>
+
+        <div class="dragon-container">
+            <img src="https://i.ibb.co/Lhb8Y6H/dragon-sleepy.png" class="dragon-img" id="main-dragon">
+        </div>
+
+        <div id="status-area" style="text-align:center;">
+            <p id="timer-text" style="color:#94a3b8;">Madenciler çalışıyor...</p>
+            <button id="wake-btn" class="btn" style="display:none; background:#fb7185;" onclick="uyandir()">⏰ Ejderhayı Uyandır!</button>
+        </div>
+    </div>
+
+    <div id="page-shop" class="page">
+        <h3 style="border-bottom: 2px solid #38bdf8; padding-bottom: 10px;">🛒 Ejderha Mağazası</h3>
+        
+        <div class="shop-card">
+            <h4>Bebek Ejderha 🥚</h4>
+            <p>Maliyet: 500 💎 | Kazanç: +50/s</p>
+            <button class="btn" onclick="satinal(500, 50)">Satın Al</button>
+        </div>
+
+        <div class="shop-card">
+            <h4>Yeşil Uykucu Ejder 🐲</h4>
+            <p>Maliyet: 5.000 💎 | Kazanç: +600/s</p>
+            <button class="btn" onclick="satinal(5000, 600)">Satın Al</button>
+        </div>
+
+        <div class="shop-card">
+            <h4>Kraliyet Ejderhası 👑</h4>
+            <p>Maliyet: 50.000 💎 | Kazanç: +7500/s</p>
+            <button class="btn" onclick="satinal(50000, 7500)">Satın Al</button>
+        </div>
+    </div>
+
+    <div id="page-wallet" class="page">
+        <h3>💰 Cüzdanım</h3>
+        <div class="header-card">
+            <p>Çekilebilir Bakiye</p>
+            <h2 id="bakiye-wallet">0.00</h2>
+            <p style="font-size:12px; color:#94a3b8;">Minimum çekim: 1,000,000 💎</p>
+        </div>
+        <div class="shop-card">
+            <input type="text" placeholder="TON Cüzdan Adresi (U...)" style="width:100%; background:#0f172a; border:1px solid #334155; color:white; padding:10px; border-radius:8px; box-sizing:border-box;">
+            <button class="btn" onclick="alert('Yetersiz bakiye!')">Para Çek</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active-nav" onclick="tab('page-mine', this)">
+            <span style="font-size:20px;">⛏️</span>
+            <span>Maden</span>
+        </div>
+        <div class="nav-item" onclick="tab('page-shop', this)">
+            <span style="font-size:20px;">🛒</span>
+            <span>Mağaza</span>
+        </div>
+        <div class="nav-item" onclick="tab('page-wallet', this)">
+            <span style="font-size:20px;">💰</span>
+            <span>Cüzdan</span>
+        </div>
+    </div>
+
+    <script>
+        let bakiye = 0;
+        let hiz = 0;
+        let sonUyandirma = Date.now();
+
+        // Sayfa Değiştirme Fonksiyonu
+        function tab(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            document.getElementById(pageId).classList.add('active');
+            el.classList.add('active-nav');
+        }
+
+        // Satın Alma Fonksiyonu
+        function satinal(fiyat, gelir) {
+            if (bakiye >= fiyat) {
+                bakiye -= fiyat;
+                hiz += gelir;
+                updateDisplay();
+                alert("Başarıyla satın alındı!");
+            } else {
+                alert("Yeterli elmasın yok!");
+            }
+        }
+
+        // Uyandırma Fonksiyonu
+        function uyandir() {
+            sonUyandirma = Date.now();
+            document.getElementById('wake-btn').style.display = 'none';
+            document.getElementById('timer-text').innerText = "Madenciler çalışıyor...";
+        }
+
+        // Ekran Güncelleme
+        function updateDisplay() {
+            document.getElementById('bakiye').innerText = bakiye.toFixed(2);
+            document.getElementById('bakiye-wallet').innerText = bakiye.toFixed(2);
+            document.getElementById('hiz').innerText = hiz;
+        }
+
+        // Ana Döngü (Her saniye)
+        setInterval(() => {
+            let simdi = Date.now();
+            let gecenSureMs = simdi - sonUyandirma;
+            let gecenSureSaat = gecenSureMs / (1000 * 60 * 60);
+
+            if (gecenSureSaat <= 12) {
+                // Kazanç ekle
+                let saniyelikKazanc = hiz / 3600;
+                bakiye += saniyelikKazanc;
+                updateDisplay();
+            } else {
+                // 12 saat doldu
+                document.getElementById('wake-btn').style.display = 'block';
+                document.getElementById('timer-text').innerText = "Ejderha uykuya daldı!";
+            }
+        }, 1000);
+
+        // Başlangıçta ekranı güncelle
+        updateDisplay();
+    </script>
+</body>
+</html>
