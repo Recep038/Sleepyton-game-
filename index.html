@@ -97,7 +97,7 @@
         tg.expand();
         
         const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "test_user";
-        const botUser = "Sleepyton_bot"; // Bot adını buraya yaz
+        const botUser = "Sleepyton_bot"; 
         const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
 
         let state = { bakiye: 0, hiz: 0, refs: 0, lastSync: Date.now() };
@@ -113,20 +113,22 @@
                     state = data;
                     let offTime = (Date.now() - state.lastSync) / 1000 / 3600;
                     if(offTime > 0 && state.hiz > 0) state.bakiye += (Math.min(offTime, 12) * state.hiz);
+                    update();
                 } else {
-                    // Yeni kullanıcıysa ve referansla geldiyse
+                    // YENİ KULLANICI
                     if(invitedBy && invitedBy !== userId.toString()) {
                         giveRefAward(invitedBy);
                     }
+                    save(); // İlk kaydı oluştur
+                    update();
                 }
-                update();
             });
         }
 
         function giveRefAward(inviterId) {
             fetch(`${dbURL}/users/${inviterId}.json`).then(r => r.json()).then(inviterData => {
                 if(inviterData) {
-                    inviterData.bakiye += 1000;
+                    inviterData.bakiye = (inviterData.bakiye || 0) + 1000;
                     inviterData.refs = (inviterData.refs || 0) + 1;
                     fetch(`${dbURL}/users/${inviterId}.json`, { method: 'PUT', body: JSON.stringify(inviterData) });
                 }
@@ -153,8 +155,14 @@
         }
 
         function copyLink() {
-            navigator.clipboard.writeText(document.getElementById('ref-link-display').innerText);
-            alert("Kopyalandı!");
+            const link = document.getElementById('ref-link-display').innerText;
+            const tempInput = document.createElement("input");
+            document.body.appendChild(tempInput);
+            tempInput.value = link;
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert("Davet linkin kopyalandı!");
         }
 
         function update() {
