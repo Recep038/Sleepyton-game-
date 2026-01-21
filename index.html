@@ -119,7 +119,37 @@
         document.getElementById('ref-link-display').innerText = `https://t.me/${botUser}?start=${userId}`;
 
         // Veri Yükle
-        function load() {
+        function load(function load() {
+    // 1. Önce kimin geldiğine bak (URL'den ID'yi çek)
+    const urlParams = new URLSearchParams(window.location.search);
+    const invitedBy = urlParams.get('tgWebAppStartParam');
+
+    fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
+        if(data) {
+            state = data;
+        } else {
+            // EĞER KULLANICI YENİYSE (İLK KEZ GİRİYORSA)
+            if(invitedBy && invitedBy !== userId.toString()) {
+                // Davet edene ödül gönder
+                odulGonder(invitedBy);
+            }
+        }
+        update();
+    });
+}
+
+function odulGonder(inviterId) {
+    // Davet eden kişinin verilerini bul ve 1000 elmas ekle
+    fetch(`${dbURL}/users/${inviterId}.json`).then(r => r.json()).then(inviterData => {
+        if(inviterData) {
+            inviterData.bakiye += 1000;
+            inviterData.refs = (inviterData.refs || 0) + 1;
+            // Güncellenmiş veriyi Firebase'e geri yükle
+            fetch(`${dbURL}/users/${inviterId}.json`, { method: 'PUT', body: JSON.stringify(inviterData) });
+        }
+    });
+}
+) {
             fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
                 if(data) {
                     state = data;
