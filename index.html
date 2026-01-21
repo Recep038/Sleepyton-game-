@@ -3,66 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon Mining</title>
+    <title>SleepyTon Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { background: #1a1a2e; color: white; font-family: Arial; text-align: center; margin: 0; padding: 20px; }
-        .stat-card { background: #16213e; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #0f3460; }
-        .coin-btn { background: #e94560; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; margin: 5px 0; font-weight: bold; }
-        #status-msg { color: #ff4d4d; font-weight: bold; margin: 10px 0; }
-        .sleepy-image { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #e94560; margin: 20px 0; }
+        body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; padding-bottom: 70px; }
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Alt Menü */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; }
+        .nav-item { color: #94a3b8; text-decoration: none; font-size: 12px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active-nav { color: #38bdf8; }
+
+        /* Kartlar ve Butonlar */
+        .card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #334155; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; }
+        .sleepy-gif { width: 120px; height: 120px; margin: 20px auto; display: block; }
     </style>
 </head>
 <body>
-    <div class="stat-card">
-        <h2>💤 SleepyTon</h2>
-        <p>Bakiye: <span id="bakiye">0.00</span> TON</p>
-        <p>Saatlik Kazanç: <span id="kazanc">0</span> TON/S</p>
+
+    <div id="page-mine" class="page active">
+        <div class="card">
+            <h2 style="margin:0">💤 SleepyTon</h2>
+            <p>Bakiye: <span id="bakiye">0.00</span> 💎</p>
+            <p>Saatlik Gelir: +<span id="hiz">0</span>/s</p>
+        </div>
+        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f634/512.gif" class="sleepy-gif">
+        <div id="uyandirma-bolumu" style="display:none;">
+            <p style="color:#fb7185">Herkes uyuyakaldı!</p>
+            <button class="btn" onclick="uyandir()">⏰ Madencileri Uyandır</button>
+        </div>
     </div>
 
-    <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f634/512.gif" class="sleepy-image" id="main-image">
-    <div id="status-msg"></div>
-    <button class="coin-btn" id="wake-btn" onclick="uyandir()" style="display:none;">⏰ UYANDIR (Üretim Durdu!)</button>
+    <div id="page-shop" class="page">
+        <h3>🏪 Uykucu Mağazası</h3>
+        <div class="card">
+            <h4>Uykucu Kedi 🐱</h4>
+            <p>Fiyat: 500 💎 | Gelir: +10/s</p>
+            <button class="btn" onclick="satinal(500, 10)">Satın Al</button>
+        </div>
+        <div class="card">
+            <h4>Uykucu Ayı 🐻</h4>
+            <p>Fiyat: 5000 💎 | Gelir: +150/s</p>
+            <button class="btn" onclick="satinal(5000, 150)">Satın Al</button>
+        </div>
+    </div>
 
-    <div class="stat-card">
-        <h3>Market</h3>
-        <button class="coin-btn" onclick="satinal(500, 50)">Şekerleme Yapan (500 Coin - 50/S)</button>
-        <button class="coin-btn" onclick="satinal(2000, 250)">Derin Uyku (2000 Coin - 250/S)</button>
+    <div id="page-wallet" class="page">
+        <h3>💰 Cüzdan ve Çekim</h3>
+        <div class="card">
+            <p>Toplam Birikim: <span id="bakiye-cuzdan">0.00</span> 💎</p>
+            <hr style="border:0.5px solid #334155">
+            <input type="text" placeholder="TON Cüzdan Adresi" style="width:90%; padding:10px; border-radius:5px; border:none; margin-top:10px;">
+            <button class="btn" style="background:#4ade80">Para Çek (Minimum 1M)</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active-nav" onclick="tab('page-mine', this)"><span>⛏️</span><span>Maden</span></div>
+        <div class="nav-item" onclick="tab('page-shop', this)"><span>🛒</span><span>Mağaza</span></div>
+        <div class="nav-item" onclick="tab('page-wallet', this)"><span>💰</span><span>Cüzdan</span></div>
     </div>
 
     <script>
-        let bakiye = 0;
-        let saatlikKazanc = 0;
-        let sonUyandirma = Date.now();
+        let bakiye = 0; let hiz = 0; let sonGiris = Date.now();
 
-        function ekraniGuncelle() {
-            document.getElementById('bakiye').innerText = bakiye.toFixed(2);
-            document.getElementById('kazanc').innerText = saatlikKazanc;
+        function tab(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            document.getElementById(pageId).classList.add('active');
+            el.classList.add('active-nav');
         }
 
         function satinal(fiyat, gelir) {
-            if (bakiye >= fiyat) {
-                bakiye -= fiyat;
-                saatlikKazanc += gelir;
-                ekraniGuncelle();
-            } else { alert("Yetersiz bakiye!"); }
+            if(bakiye >= fiyat) { bakiye -= fiyat; hiz += gelir; update(); } 
+            else { alert("Yetersiz bakiye!"); }
         }
 
-        function uyandir() {
-            sonUyandirma = Date.now();
-            document.getElementById('wake-btn').style.display = "none";
-            document.getElementById('status-msg').innerText = "";
+        function update() {
+            document.getElementById('bakiye').innerText = bakiye.toFixed(2);
+            document.getElementById('bakiye-cuzdan').innerText = bakiye.toFixed(2);
+            document.getElementById('hiz').innerText = hiz;
         }
 
         setInterval(() => {
-            let gecenSure = (Date.now() - sonUyandirma) / 1000 / 60 / 60; // Saat birimi
-            if (gecenSure <= 12) {
-                bakiye += (saatlikKazanc / 3600);
-                ekraniGuncelle();
-            } else {
-                document.getElementById('wake-btn').style.display = "block";
-                document.getElementById('status-msg').innerText = "Herkes uyuyakaldı! Onları uyandır.";
-            }
+            let gecenSure = (Date.now() - sonGiris) / 1000 / 60 / 60;
+            if(gecenSure <= 12) { bakiye += (hiz / 3600); update(); }
+            else { document.getElementById('uyandirma-bolumu').style.display = 'block'; }
         }, 1000);
+
+        function uyandir() { sonGiris = Date.now(); document.getElementById('uyandirma-bolumu').style.display = 'none'; }
     </script>
 </body>
 </html>
