@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleepyTon Mining</title>
+    <style>
+        body { background: #1a1a2e; color: white; font-family: Arial; text-align: center; margin: 0; padding: 20px; }
+        .stat-card { background: #16213e; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #0f3460; }
+        .coin-btn { background: #e94560; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; margin: 5px 0; font-weight: bold; }
+        #status-msg { color: #ff4d4d; font-weight: bold; margin: 10px 0; }
+        .sleepy-image { width: 150px; height: 150px; border-radius: 50%; border: 5px solid #e94560; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="stat-card">
+        <h2>💤 SleepyTon</h2>
+        <p>Bakiye: <span id="bakiye">0.00</span> TON</p>
+        <p>Saatlik Kazanç: <span id="kazanc">0</span> TON/S</p>
+    </div>
+
+    <img src="https://via.placeholder.com/150?text=Uykucu+Ton" class="sleepy-image" id="main-image">
+    <div id="status-msg"></div>
+    <button class="coin-btn" id="wake-btn" onclick="uyandir()" style="display:none;">⏰ UYANDIR (Üretim Durdu!)</button>
+
+    <div class="stat-card">
+        <h3>Market</h3>
+        <button class="coin-btn" onclick="satinal(500, 50)">Şekerleme Yapan (500 Coin - 50/S)</button>
+        <button class="coin-btn" onclick="satinal(2000, 250)">Derin Uyku (2000 Coin - 250/S)</button>
+    </div>
+
+    <script>
+        let bakiye = 0;
+        let saatlikKazanc = 0;
+        let sonUyandirma = Date.now();
+
+        function ekraniGuncelle() {
+            document.getElementById('bakiye').innerText = bakiye.toFixed(2);
+            document.getElementById('kazanc').innerText = saatlikKazanc;
+        }
+
+        function satinal(fiyat, gelir) {
+            if (bakiye >= fiyat) {
+                bakiye -= fiyat;
+                saatlikKazanc += gelir;
+                ekraniGuncelle();
+            } else { alert("Yetersiz bakiye!"); }
+        }
+
+        function uyandir() {
+            sonUyandirma = Date.now();
+            document.getElementById('wake-btn').style.display = "none";
+            document.getElementById('status-msg').innerText = "";
+        }
+
+        setInterval(() => {
+            let gecenSure = (Date.now() - sonUyandirma) / 1000 / 60 / 60; // Saat birimi
+            if (gecenSure <= 12) {
+                bakiye += (saatlikKazanc / 3600);
+                ekraniGuncelle();
+            } else {
+                document.getElementById('wake-btn').style.display = "block";
+                document.getElementById('status-msg').innerText = "Herkes uyuyakaldı! Onları uyandır.";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
