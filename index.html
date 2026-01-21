@@ -3,38 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon - Pro Edition</title>
+    <title>SleepyTon - Final</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 90px; user-select: none; }
         .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .header-card { 
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 20px; border-radius: 20px; margin-bottom: 20px; 
-            border: 1px solid #38bdf8; text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-
-        .dragon-img { 
-            width: 180px; height: 180px; border-radius: 50%; 
-            border: 5px solid #38bdf8; object-fit: cover;
-            margin: 20px auto; display: block;
-        }
-
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; background: #1e293b; 
-            display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid #334155;
-        }
-        .nav-item { color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .nav-item.active-nav { color: #38bdf8; font-weight: bold; }
-
-        .item-card { background: #1e293b; padding: 12px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #334155; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .header-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #38bdf8; text-align: center; }
+        .dragon-img { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #38bdf8; margin: 15px auto; display: block; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; }
+        .nav-item { color: #94a3b8; font-size: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active-nav { color: #38bdf8; }
+        .item-card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #334155; }
         .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        .bonus-btn { background: #f59e0b; margin-bottom: 15px; }
+        .bonus-btn { background: #f59e0b; margin-bottom: 10px; }
+        input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -46,45 +30,49 @@
             <div style="font-size: 30px; font-weight: bold;"><span id="bakiye">0.00</span> 💎</div>
             <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/saat</div>
         </div>
-        <img id="dragon-pic" src="https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-flat-vector_138676-3918.jpg" class="dragon-img">
-    </div>
-
-    <div id="page-leader" class="page">
-        <h3>🏆 Şampiyonlar Ligi</h3>
-        <div id="leader-list">Yükleniyor...</div>
-    </div>
-
-    <div id="page-ref" class="page">
-        <h3>👥 Arkadaşlarım</h3>
-        <div class="header-card">
-            <p style="font-size:12px;">Davet Linkin:</p>
-            <p id="ref-link-box" style="font-size:10px; color:#38bdf8; word-break:break-all;"></p>
-            <button class="btn" onclick="copyLink()">Linki Kopyala</button>
-        </div>
-        <div id="friend-list">
-            <p style="text-align:center; color:#94a3b8;">Henüz arkadaşın yok.</p>
-        </div>
+        <img id="dragon-pic" src="https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration_138676-3918.jpg" class="dragon-img">
     </div>
 
     <div id="page-shop" class="page">
-        <h3>🏪 Market</h3>
+        <h3>🛒 Market</h3>
         <div class="item-card">
             <h4>Bebek Ejderha 🥚</h4>
-            <p>Fiyat: 100 💎 | +10/saat</p>
+            <p>100 💎 | +10/saat</p>
             <button class="btn" onclick="satinal(100, 10)">Satın Al</button>
         </div>
         <div class="item-card">
             <h4>Yeşil Ejderha 🐲</h4>
-            <p>Fiyat: 1000 💎 | +150/saat</p>
+            <p>1.000 💎 | +150/saat</p>
             <button class="btn" onclick="satinal(1000, 150)">Satın Al</button>
+        </div>
+    </div>
+
+    <div id="page-ref" class="page">
+        <h3>👥 Arkadaşlar</h3>
+        <div class="header-card">
+            <p id="ref-link-box" style="font-size:10px; word-break:break-all;"></p>
+            <button class="btn" onclick="copyLink()">Linki Kopyala</button>
+        </div>
+        <div id="friend-list"></div>
+    </div>
+
+    <div id="page-wallet" class="page">
+        <h3>💰 Cüzdanım</h3>
+        <div class="header-card">
+            <p>Çekilebilir Bakiye</p>
+            <h2 id="bakiye-wallet">0.00</h2>
+        </div>
+        <div class="item-card">
+            <input type="text" id="wallet-addr" placeholder="TON Adresinizi Yazın">
+            <button class="btn" onclick="alert('Minimum çekim: 100.000 💎')">Çekim Talebi</button>
         </div>
     </div>
 
     <div class="nav-bar">
         <div class="nav-item active-nav" onclick="tab('page-mine', this)"><span>⛏️</span>Maden</div>
-        <div class="nav-item" onclick="tab('page-leader', this)"><span>🏆</span>Liderler</div>
-        <div class="nav-item" onclick="tab('page-ref', this)"><span>👥</span>Arkadaşlar</div>
         <div class="nav-item" onclick="tab('page-shop', this)"><span>🛒</span>Market</div>
+        <div class="nav-item" onclick="tab('page-ref', this)"><span>👥</span>Arkadaş</div>
+        <div class="nav-item" onclick="tab('page-wallet', this)"><span>💰</span>Cüzdan</div>
     </div>
 
     <script>
@@ -93,10 +81,7 @@
         const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Oyuncu";
         const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
         
-        let state = { 
-            bakiye: 0, hiz: 0, lastSync: Date.now(), 
-            lastDaily: 0, name: userName, friends: [] 
-        };
+        let state = { bakiye: 0, hiz: 0, lastSync: Date.now(), lastDaily: 0, name: userName, friends: [] };
 
         document.getElementById('ref-link-box').innerText = `https://t.me/Sleepyton_bot?start=${userId}`;
 
@@ -115,8 +100,8 @@
         }
 
         function checkReferral() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refId = urlParams.get('tgWebAppStartParam');
+            const params = new URLSearchParams(window.location.search);
+            const refId = params.get('tgWebAppStartParam');
             if(refId && refId !== userId.toString()) {
                 fetch(`${dbURL}/users/${refId}.json`).then(r => r.json()).then(inviter => {
                     if(inviter) {
@@ -126,59 +111,39 @@
                         fetch(`${dbURL}/users/${refId}.json`, { method: 'PUT', body: JSON.stringify(inviter) });
                     }
                 });
-                state.bakiye = 500; // Yeni gelene ödül
+                state.bakiye = 500;
             }
         }
 
         function claimDaily() {
             const now = Date.now();
-            if(now - state.lastDaily > 24*60*60*1000) {
+            if(now - state.lastDaily > 86400000) {
                 state.bakiye += 500;
                 state.lastDaily = now;
-                alert("500 💎 Günlük bonusun eklendi!");
-                save();
-                update();
-                checkDailyStatus();
+                save(); update(); checkDailyStatus();
+                alert("Ödül Alındı!");
             }
         }
 
         function checkDailyStatus() {
-            const btn = document.getElementById('daily-btn');
-            const now = Date.now();
-            if(now - state.lastDaily < 24*60*60*1000) {
-                btn.style.opacity = "0.5";
-                btn.innerText = "Yarın Tekrar Gel";
-                btn.onclick = null;
+            if(Date.now() - state.lastDaily < 86400000) {
+                document.getElementById('daily-btn').style.display = "none";
             }
-        }
-
-        function getLeaders() {
-            fetch(`${dbURL}/users.json`).then(r => r.json()).then(all => {
-                let sorted = Object.values(all).sort((a,b) => b.bakiye - a.bakiye).slice(0, 5);
-                let html = "";
-                sorted.forEach((u, i) => {
-                    html += `<div class="item-card flex-between"><span>${i+1}. ${u.name || 'Gizli'}</span> <b>${Math.floor(u.bakiye)} 💎</b></div>`;
-                });
-                document.getElementById('leader-list').innerHTML = html;
-            });
         }
 
         function update() {
             document.getElementById('bakiye').innerText = state.bakiye.toFixed(2);
+            document.getElementById('bakiye-wallet').innerText = state.bakiye.toFixed(2);
             document.getElementById('hiz').innerText = state.hiz;
             
-            // Level & Resim
-            let lvl = 1; let img = "https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-flat-vector_138676-3918.jpg";
+            let lvl = 1; let img = "https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration_138676-3918.jpg";
             if(state.bakiye > 5000) { lvl = 2; img = "https://img.freepik.com/free-vector/cute-dragon-flying-cartoon-vector-icon-illustration_138676-2131.jpg"; }
-            if(state.bakiye > 25000) { lvl = 3; img = "https://img.freepik.com/free-vector/dragon-fire-cartoon-vector-icon-illustration-animal-mythology-icon-concept-isolated-premium-flat_138676-3831.jpg"; }
             
             document.getElementById('lvl-text').innerText = `Level ${lvl}: Ejderha`;
             document.getElementById('dragon-pic').src = img;
 
-            // Arkadaş Listesi
             if(state.friends && state.friends.length > 0) {
-                let fHtml = state.friends.map(f => `<div class="item-card">👤 ${f}</div>`).join('');
-                document.getElementById('friend-list').innerHTML = fHtml;
+                document.getElementById('friend-list').innerHTML = state.friends.map(f => `<div class="item-card">👤 ${f}</div>`).join('');
             }
         }
 
@@ -192,11 +157,13 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
             document.getElementById(id).classList.add('active');
             el.classList.add('active-nav');
-            if(id === 'page-leader') getLeaders();
         }
 
         function satinal(f, g) {
-            if(state.bakiye >= f) { state.bakiye -= f; state.hiz += g; update(); save(); }
+            if(state.bakiye >= f) {
+                state.bakiye -= f; state.hiz += g; update(); save();
+                alert("Başarılı!");
+            } else alert("Yetersiz 💎!");
         }
 
         function copyLink() {
@@ -205,7 +172,7 @@
         }
 
         setInterval(() => { if(state.hiz > 0) { state.bakiye += (state.hiz/3600); update(); } }, 1000);
-        setInterval(save, 15000);
+        setInterval(save, 10000);
         window.onload = load;
     </script>
 </body>
