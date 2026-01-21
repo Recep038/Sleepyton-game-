@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon - PRO</title>
+    <title>SleepyTon - Global Ranking</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 90px; user-select: none; }
@@ -16,8 +16,8 @@
         .nav-item { color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
         .nav-item.active-nav { color: #38bdf8; font-weight: bold; }
         .item-card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #334155; }
+        .leader-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(56, 189, 248, 0.1); border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #38bdf8; }
         .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        .btn:disabled { background: #475569; cursor: not-allowed; }
         input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
@@ -28,150 +28,4 @@
         <div class="header-card">
             <h2 id="lvl-text" style="color:#38bdf8; margin:0;">Level 1</h2>
             <div style="font-size: 32px; font-weight: bold; margin:10px 0;"><span id="bakiye">0.00</span> 💎</div>
-            <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/saat</div>
-        </div>
-        <img id="dragon-pic" src="https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration_138676-3918.jpg" class="dragon-img">
-    </div>
-
-    <div id="page-shop" class="page">
-        <h3>🛒 Market</h3>
-        <div class="item-card">
-            <h4>🐣 Bebek Ejderha</h4>
-            <p>100 💎 | +10/saat</p>
-            <button class="btn" onclick="satinal(100, 10)">Satın Al</button>
-        </div>
-        <div class="item-card">
-            <h4>🐲 Yetişkin Ejderha</h4>
-            <p>1.000 💎 | +150/saat</p>
-            <button class="btn" onclick="satinal(1000, 150)">Satın Al</button>
-        </div>
-    </div>
-
-    <div id="page-ref" class="page">
-        <h3>👥 Davet Et</h3>
-        <div class="header-card">
-            <p id="ref-link-box" style="font-size:10px; background:#000; padding:10px; border-radius:8px; word-break:break-all;"></p>
-            <button class="btn" style="margin-top:10px;" onclick="copyLink()">Linki Kopyala</button>
-        </div>
-        <div id="friend-list"></div>
-    </div>
-
-    <div id="page-wallet" class="page">
-        <h3>💰 Cüzdan & Çekim</h3>
-        <div class="header-card">
-            <p>Bakiyeniz</p>
-            <h2 id="bakiye-wallet">0.00</h2>
-            <p style="font-size:11px; color:#94a3b8;">Min Çekim: 100.000 💎</p>
-        </div>
-        <div class="item-card">
-            <input type="text" id="wallet-addr" placeholder="TON Adresiniz (UQ...)">
-            <button id="withdraw-btn" class="btn" onclick="talepGonder()">💎 Talep Gönder</button>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-item active-nav" onclick="tab('page-mine', this)"><span>⛏️</span>Maden</div>
-        <div class="nav-item" onclick="tab('page-shop', this)"><span>🛒</span>Market</div>
-        <div class="nav-item" onclick="tab('page-ref', this)"><span>👥</span>Arkadaş</div>
-        <div class="nav-item" onclick="tab('page-wallet', this)"><span>💰</span>Cüzdan</div>
-    </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "test_user";
-        const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Oyuncu";
-        const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
-        
-        let state = { bakiye: 0, hiz: 0, lastSync: Date.now(), lastDaily: 0, friends: [] };
-
-        document.getElementById('ref-link-box').innerText = `https://t.me/Sleepyton_bot?start=${userId}`;
-
-        function load() {
-            fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
-                if(data) {
-                    state = {...state, ...data};
-                    let offTime = (Date.now() - state.lastSync) / 1000 / 3600;
-                    if(offTime > 0 && state.hiz > 0) state.bakiye += (Math.min(offTime, 12) * state.hiz);
-                } else { checkReferral(); }
-                update(); checkDailyStatus();
-            });
-        }
-
-        function checkReferral() {
-            const p = new URLSearchParams(window.location.search);
-            const rId = p.get('tgWebAppStartParam');
-            if(rId && rId !== userId.toString()) {
-                fetch(`${dbURL}/users/${rId}.json`).then(r => r.json()).then(inv => {
-                    if(inv) {
-                        inv.bakiye += 1000;
-                        if(!inv.friends) inv.friends = [];
-                        inv.friends.push(userName);
-                        fetch(`${dbURL}/users/${rId}.json`, { method: 'PUT', body: JSON.stringify(inv) });
-                    }
-                });
-                state.bakiye = 500;
-            }
-        }
-
-        function talepGonder() {
-            const addr = document.getElementById('wallet-addr').value;
-            if(addr.length < 10) return alert("Geçersiz TON adresi!");
-            if(state.bakiye < 100000) return alert("Yetersiz bakiye (Min 100k)!");
-
-            const talep = { userId, userName, addr, miktar: state.bakiye, tarih: new Date().toLocaleString() };
-            fetch(`${dbURL}/talepler/${userId}.json`, { method: 'PUT', body: JSON.stringify(talep) }).then(() => {
-                state.bakiye = 0; save(); update();
-                alert("✅ Talebiniz alındı! İncelenip ödemeniz yapılacaktır.");
-            });
-        }
-
-        function satinal(f, a) {
-            if(state.bakiye >= f) {
-                state.bakiye -= f; state.hiz += a;
-                update(); save(); alert("Satın alma başarılı!");
-            } else alert("Yetersiz elmas!");
-        }
-
-        function update() {
-            document.getElementById('bakiye').innerText = state.bakiye.toFixed(2);
-            document.getElementById('bakiye-wallet').innerText = state.bakiye.toFixed(2);
-            document.getElementById('hiz').innerText = state.hiz;
-            document.getElementById('lvl-text').innerText = state.bakiye > 5000 ? "Level 2: Ejderha" : "Level 1: Bebek";
-            if(state.friends) document.getElementById('friend-list').innerHTML = state.friends.map(f => `<div class="item-card">👤 ${f}</div>`).join('');
-        }
-
-        function claimDaily() {
-            if(Date.now() - state.lastDaily > 86400000) {
-                state.bakiye += 500; state.lastDaily = Date.now();
-                save(); update(); checkDailyStatus(); alert("500 💎 Alındı!");
-            }
-        }
-
-        function checkDailyStatus() {
-            if(Date.now() - state.lastDaily < 86400000) document.getElementById('daily-btn').style.display = "none";
-        }
-
-        function save() {
-            state.lastSync = Date.now();
-            fetch(`${dbURL}/users/${userId}.json`, { method: 'PUT', body: JSON.stringify(state) });
-        }
-
-        function tab(id, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active-nav');
-        }
-
-        function copyLink() {
-            const t = document.createElement('textarea'); t.value = document.getElementById('ref-link-box').innerText;
-            document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
-            alert("Kopyalandı!");
-        }
-
-        setInterval(() => { if(state.hiz > 0) { state.bakiye += (state.hiz/3600); update(); } }, 1000);
-        setInterval(save, 10000);
-        window.onload = load;
-    </script>
-</body>
-</html>
+            <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/
