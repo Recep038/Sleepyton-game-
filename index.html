@@ -2,109 +2,157 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SleepyTon - Global</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding-bottom: 90px; }
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        :root { --primary: #38bdf8; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #f59e0b; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; margin: 0; padding-bottom: 90px; overflow-x: hidden; }
+        
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s ease-out; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Üst Bilgi Alanı */
-        .status-bar { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #334155; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .bakiye-text { font-size: 24px; font-weight: bold; color: var(--primary); }
+        /* Üst Panel */
+        .header-section { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 0 0 25px 25px; border-bottom: 2px solid var(--primary); text-align: center; margin-bottom: 20px; }
+        .balance-main { font-size: 36px; font-weight: 800; color: var(--primary); text-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+        .stats-row { display: flex; justify-content: center; gap: 15px; margin-top: 10px; font-size: 14px; color: #94a3b8; }
 
-        /* Kart Yapısı */
-        .section-title { font-size: 16px; color: #94a3b8; margin: 15px 5px 10px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .reward-card { background: var(--card); border-radius: 15px; padding: 15px; border: 1px solid #334155; text-align: center; transition: 0.3s; }
-        .reward-card img { width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; }
-        .reward-card h4 { margin: 5px 0; font-size: 14px; }
-        .reward-card p { margin: 0; font-size: 12px; color: #64748b; }
+        /* Kart Tasarımları */
+        .card { background: var(--card); border-radius: 18px; padding: 15px; border: 1px solid #334155; margin-bottom: 15px; position: relative; }
+        .card-title { font-size: 14px; color: var(--primary); font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Çarkıfelek Alanı */
+        .wheel-area { text-align: center; padding: 10px; }
+        .wheel-outer { width: 220px; height: 220px; margin: 0 auto 20px; border: 6px solid var(--card); border-radius: 50%; position: relative; box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); background: #1e293b; }
+        #wheel-img { width: 100%; height: 100%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+        .wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 35px; z-index: 5; }
 
-        /* Çevirme Butonu ve Çark */
-        .spin-section { background: var(--card); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #334155; margin-bottom: 15px; }
-        .wheel-container { width: 200px; height: 200px; margin: 15px auto; border: 4px solid var(--primary); border-radius: 50%; position: relative; overflow: hidden; }
-        #wheel { width: 100%; height: 100%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        .spin-btn { background: linear-gradient(to right, #f59e0b, #d97706); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: bold; font-size: 16px; cursor: pointer; width: 80%; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3); }
+        /* Grid Yapısı (Karakterler ve Ödüller) */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .reward-item { background: rgba(15, 23, 42, 0.5); border-radius: 15px; padding: 15px; text-align: center; border: 1px solid #334155; }
+        .reward-item img { width: 50px; height: 50px; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+        .reward-item h4 { margin: 0; font-size: 13px; }
+        .reward-item p { margin: 4px 0 0; font-size: 11px; color: #64748b; }
 
-        /* Alt Menü */
-        .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; }
-        .nav-item { color: #64748b; font-size: 11px; text-align: center; cursor: pointer; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        /* Butonlar */
+        .btn-action { background: linear-gradient(90deg, #f59e0b, #ea580c); color: white; border: none; padding: 14px; border-radius: 12px; width: 100%; font-weight: 800; cursor: pointer; font-size: 15px; transition: 0.2s; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.3); }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-action:disabled { background: #475569; box-shadow: none; cursor: not-allowed; }
+
+        /* Alt Navigasyon */
+        .nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; box-shadow: 0 -5px 20px rgba(0,0,0,0.3); }
+        .nav-item { color: #64748b; font-size: 10px; text-align: center; flex: 1; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); transform: translateY(-3px); }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="page-mine" class="page active">
-        <div class="status-bar">
-            <div>
-                <div style="font-size: 12px; color: #4ade80;">Kazanç: +<span id="hiz">0</span>/saat</div>
-                <div class="bakiye-text"><span id="bakiye">0.00</span> 💎</div>
-            </div>
-            <div style="text-align: right;">
-                <div id="lvl-text" style="font-size: 12px;">Level 1: Ejderha</div>
-            </div>
-        </div>
-
-        <div class="spin-section">
-            <div class="section-title">🎡 Günlük Şans Çarkı</div>
-            <div class="wheel-container">
-                <img id="wheel" src="https://i.ibb.co/pW980YV/wheel-colorful.png">
-            </div>
-            <button id="spin-btn" class="spin-btn" onclick="spinWheel()">ÇEVİR!</button>
-        </div>
-
-        <div class="section-title">🐉 Karakterlerim</div>
-        <div class="grid-container">
-            <div class="reward-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/10433/10433048.png"> <h4>Yeşil Ejder</h4>
-                <p>Aktif</p>
-            </div>
-            <div class="reward-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/3211/3211116.png"> <h4>Şövalye</h4>
-                <p id="knight-status">Kilitli</p>
+        <div class="header-section">
+            <div id="lvl-badge" style="font-size: 12px; color: var(--primary); margin-bottom: 5px; font-weight: bold;">LEVEL 1: EJDERHA</div>
+            <div class="balance-main"><span id="bakiye">0.00</span> 💎</div>
+            <div class="stats-row">
+                <span>⚡ +<span id="hiz">0</span>/saat</span>
+                <span>👥 <span id="friend-count">0</span> Arkadaş</span>
             </div>
         </div>
 
-        <div class="section-title">🎁 Ödül Kutuları</div>
-        <div class="grid-container">
-            <div class="reward-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/4213/4213958.png"> <h4>Günlük Paket</h4>
-                <p>Beklemede</p>
+        <div class="card wheel-area">
+            <div class="card-title">🎡 Şans Çarkı</div>
+            <div class="wheel-outer">
+                <img class="wheel-pointer" src="https://i.ibb.co/L5p4G7S/pointer.png">
+                <img id="wheel-img" src="https://i.ibb.co/pW980YV/wheel-colorful.png">
             </div>
-            <div class="reward-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/2933/2933116.png"> <h4>Mega Ödül</h4>
-                <p>100k Hedef</p>
+            <button id="spin-btn" class="btn-action" onclick="spinWheel()">GÜNLÜK ÇEVİR</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">🐉 Karakterlerim & Ödüller</div>
+            <div class="grid">
+                <div class="reward-item">
+                    <img src="https://img.icons8.com/fluency/96/dragon.png">
+                    <h4>Yeşil Ejder</h4>
+                    <p>Aktif Karakter</p>
+                </div>
+                <div class="reward-item">
+                    <img src="https://img.icons8.com/fluency/96/knight.png">
+                    <h4>Şövalye</h4>
+                    <p id="knight-status">Kilitli</p>
+                </div>
+                <div class="reward-item">
+                    <img src="https://img.icons8.com/fluency/96/gift.png">
+                    <h4>Günlük Paket</h4>
+                    <p>Her 24s</p>
+                </div>
+                <div class="reward-item">
+                    <img src="https://img.icons8.com/fluency/96/diamond.png">
+                    <h4>Mega Kutu</h4>
+                    <p>100k Hedefi</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="page-leader" class="page"><h3>🏆 Sıralama</h3><div id="leader-list"></div></div>
-    <div id="page-shop" class="page"><h3>🛒 Market</h3><div id="shop-list"></div></div>
-    <div id="page-wallet" class="page"><h3>💰 Cüzdan</h3><div class="reward-card"><input type="text" id="wallet-addr" placeholder="TON Adresi" style="width:90%; padding:10px; background:#0f172a; color:white; border:1px solid #334155; border-radius:8px;"><button class="spin-btn" style="margin-top:15px;" onclick="alert('Talep Alındı')">Çekim Yap</button></div></div>
+    <div id="page-leader" class="page">
+        <h3 class="card-title">🏆 Dünya Sıralaması</h3>
+        <div id="leader-list"></div>
+    </div>
+
+    <div id="page-shop" class="page">
+        <h3 class="card-title">🛒 Market</h3>
+        <div class="card">
+            <h4>🥚 Bebek Ejderha</h4>
+            <p>Fiyat: 100 💎 | +10 Hız</p>
+            <button class="btn-action" onclick="buy(100, 10)">SATIN AL</button>
+        </div>
+        <div class="card">
+            <h4>🔥 Ateş Ejderhası</h4>
+            <p>Fiyat: 1.000 💎 | +150 Hız</p>
+            <button class="btn-action" onclick="buy(1000, 150)">SATIN AL</button>
+        </div>
+    </div>
+
+    <div id="page-wallet" class="page">
+        <h3 class="card-title">💰 Cüzdan</h3>
+        <div class="card" style="text-align: center;">
+            <p style="color:#94a3b8">Kullanılabilir Bakiye</p>
+            <h2 id="wallet-bakiye" style="color:var(--primary)">0.00 💎</h2>
+            <input type="text" id="wallet-addr" placeholder="TON Cüzdan Adresi (UQ...)">
+            <button class="btn-action" style="margin-top:15px;" onclick="talepGonder()">ÖDEME TALEBİ GÖNDER</button>
+            <p style="font-size:11px; color:#64748b; margin-top:10px;">Minimum Çekim: 100.000 💎</p>
+        </div>
+    </div>
 
     <div class="nav">
-        <div class="nav-item active" onclick="tab('page-mine')">⛏️<br>Maden</div>
-        <div class="nav-item" onclick="tab('page-leader')">🏆<br>Liderler</div>
-        <div class="nav-item" onclick="tab('page-shop')">🛒<br>Market</div>
-        <div class="nav-item" onclick="tab('page-wallet')">💰<br>Cüzdan</div>
+        <div class="nav-item active" onclick="tab('page-mine', this)"><i>⛏️</i>Maden</div>
+        <div class="nav-item" onclick="tab('page-leader', this)"><i>🏆</i>Liderler</div>
+        <div class="nav-item" onclick="tab('page-shop', this)"><i>🛒</i>Market</div>
+        <div class="nav-item" onclick="tab('page-wallet', this)"><i>💰</i>Cüzdan</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "test_user";
+        const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Oyuncu";
+        
+        // ÖNEMLİ: Kendi Firebase URL'ni buraya yapıştır!
         const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
         
-        let state = { bakiye: 0, hiz: 0, lastSpin: 0, knightOwned: false };
+        let state = { bakiye: 0, hiz: 0, lastSync: Date.now(), lastSpin: 0, knightOwned: false, friends: [] };
 
         function load() {
             fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
-                if(data) state = {...state, ...data};
+                if(data) {
+                    state = {...state, ...data};
+                    let offTime = (Date.now() - state.lastSync) / 1000 / 3600;
+                    if(offTime > 0 && state.hiz > 0) state.bakiye += (Math.min(offTime, 24) * state.hiz);
+                }
                 update();
                 checkSpinStatus();
             });
@@ -112,41 +160,88 @@
 
         function update() {
             document.getElementById('bakiye').innerText = state.bakiye.toFixed(2);
+            document.getElementById('wallet-bakiye').innerText = state.bakiye.toFixed(2) + " 💎";
             document.getElementById('hiz').innerText = state.hiz;
-            if(state.knightOwned) document.getElementById('knight-status').innerText = "Sahipsin";
+            document.getElementById('friend-count').innerText = state.friends ? state.friends.length : 0;
+            document.getElementById('knight-status').innerText = state.knightOwned ? "Sahipsin" : "Kilitli";
+            
+            if(state.bakiye > 10000) document.getElementById('lvl-badge').innerText = "LEVEL 2: ANTİK EJDERHA";
         }
 
+        let isSpinning = false;
         function spinWheel() {
-            if(Date.now() - state.lastSpin < 86400000) return alert("Yarın tekrar gel!");
-            const randomDeg = Math.floor(Math.random() * 3600) + 720;
-            document.getElementById('wheel').style.transform = `rotate(${randomDeg}deg)`;
+            if(isSpinning) return;
+            const now = Date.now();
+            if(now - state.lastSpin < 86400000) return alert("Hakkın bitti! Yarın tekrar gel.");
+
+            isSpinning = true;
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
             
+            const randomDeg = Math.floor(Math.random() * 3600) + 1440; 
+            document.getElementById('wheel-img').style.transform = `rotate(${randomDeg}deg)`;
+
             setTimeout(() => {
+                isSpinning = false;
                 state.bakiye += 500;
                 state.lastSpin = Date.now();
                 save(); update(); checkSpinStatus();
-                alert("Tebrikler 500 💎 kazandın!");
+                alert("🎁 Tebrikler! Çarktan 500 💎 kazandın!");
             }, 4000);
         }
 
         function checkSpinStatus() {
+            const btn = document.getElementById('spin-btn');
             if(Date.now() - state.lastSpin < 86400000) {
-                const btn = document.getElementById('spin-btn');
                 btn.innerText = "YARIN TEKRAR GEL";
-                btn.style.background = "#475569";
+                btn.disabled = true;
             }
         }
 
+        function buy(f, a) {
+            if(state.bakiye >= f) {
+                state.bakiye -= f; state.hiz += a;
+                save(); update(); alert("Satın alma başarılı!");
+            } else alert("Yetersiz bakiye!");
+        }
+
+        function talepGonder() {
+            const addr = document.getElementById('wallet-addr').value;
+            if(addr.length < 10) return alert("Geçersiz cüzdan adresi!");
+            if(state.bakiye < 100000) return alert("Minimum 100.000 💎 gereklidir!");
+            
+            const talep = { userId, userName, addr, miktar: state.bakiye, tarih: new Date().toLocaleString() };
+            fetch(`${dbURL}/talepler/${userId}.json`, { method: 'PUT', body: JSON.stringify(talep) }).then(() => {
+                state.bakiye = 0; save(); update();
+                alert("✅ Talebiniz admin panelimize iletildi.");
+            });
+        }
+
         function save() {
+            state.lastSync = Date.now();
+            state.name = userName;
             fetch(`${dbURL}/users/${userId}.json`, { method: 'PUT', body: JSON.stringify(state) });
         }
 
-        function tab(id) {
+        function tab(id, el) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+            if(id === 'page-leader') {
+                fetch(`${dbURL}/users.json`).then(r => r.json()).then(all => {
+                    let sorted = Object.values(all).sort((a,b) => b.bakiye - a.bakiye).slice(0,10);
+                    document.getElementById('leader-list').innerHTML = sorted.map((u,i) => `
+                        <div class="card" style="display:flex; justify-content:space-between; margin-bottom:8px; padding:12px;">
+                            <span>${i+1}. ${u.name || 'Oyuncu'}</span>
+                            <b color="var(--primary)">${Math.floor(u.bakiye)} 💎</b>
+                        </div>`).join('');
+                });
+            }
         }
 
         setInterval(() => { if(state.hiz > 0) { state.bakiye += (state.hiz/3600); update(); } }, 1000);
+        setInterval(save, 15000);
         window.onload = load;
     </script>
 </body>
