@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon - Dragon Empire</title>
+    <title>SleepyTon - Dragon Game</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 90px; overflow-x: hidden; }
@@ -11,12 +11,10 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Kart Tasarımları */
         .header-card { 
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             padding: 20px; border-radius: 20px; margin-bottom: 20px; 
             border: 1px solid #38bdf8; text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .dragon-img { 
@@ -26,17 +24,15 @@
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
         }
 
-        /* Navigasyon Bar */
         .nav-bar { 
             position: fixed; bottom: 0; width: 100%; background: #1e293b; 
             display: flex; justify-content: space-around; padding: 12px 0; 
             border-top: 2px solid #334155; z-index: 1000;
         }
-        .nav-item { color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; transition: 0.2s; }
-        .nav-item.active-nav { color: #38bdf8; transform: translateY(-3px); }
+        .nav-item { color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
+        .nav-item.active-nav { color: #38bdf8; font-weight: bold; }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Bileşenler */
         .shop-card { background: #1e293b; padding: 15px; border-radius: 15px; margin-bottom: 12px; border: 1px solid #334155; }
         .btn { 
             background: #38bdf8; color: #0f172a; border: none; padding: 12px; 
@@ -50,51 +46,43 @@
     <div id="page-mine" class="page active">
         <div class="header-card">
             <h2 style="margin:0; color:#38bdf8;">💤 SleepyTon</h2>
-            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;">
-                <span id="bakiye">0.00</span> <span style="font-size:16px; color:#94a3b8;">💎</span>
-            </div>
+            <div style="font-size: 32px; font-weight: bold; margin: 10px 0;"><span id="bakiye">0.00</span> 💎</div>
             <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/saat</div>
         </div>
         <img src="https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration-animal-nature-icon-concept-isolated-premium-flat-vector_138676-3918.jpg" class="dragon-img">
-        <p style="text-align:center; color:#94a3b8;">Ejderhan rüyasında para basıyor...</p>
     </div>
 
     <div id="page-shop" class="page">
-        <h3>🏪 Ejderha Marketi</h3>
+        <h3>🏪 Market</h3>
         <div class="shop-card">
             <h4>Bebek Ejderha 🥚</h4>
             <p>Fiyat: 100 💎 | +10/saat</p>
             <button class="btn" onclick="satinal(100, 10)">Satın Al</button>
         </div>
         <div class="shop-card">
-            <h4>Uykucu Dev Ejder 🐲</h4>
+            <h4>Yeşil Ejderha 🐲</h4>
             <p>Fiyat: 1000 💎 | +150/saat</p>
             <button class="btn" onclick="satinal(1000, 150)">Satın Al</button>
         </div>
     </div>
 
     <div id="page-ref" class="page">
-        <h3>👥 Arkadaşlarını Çağır</h3>
+        <h3>👥 Davet</h3>
         <div class="header-card">
-            <p>Her arkadaşın için <b>1,000 💎</b> kazan!</p>
+            <p>Her arkadaş için 1.000 💎</p>
             <div class="ref-box" id="ref-link-display">Yükleniyor...</div>
-            <button class="btn" onclick="copyLink()" style="background:#4ade80;">Linki Kopyala</button>
+            <button class="btn" onclick="copyLink()">Linki Kopyala</button>
         </div>
-        <div class="shop-card" style="text-align:center;">
-            <p>Toplam Davet: <b id="ref-count">0</b></p>
-        </div>
+        <div class="shop-card" style="text-align:center;">Davet Sayısı: <b id="ref-count">0</b></div>
     </div>
 
     <div id="page-wallet" class="page">
-        <h3>💰 Cüzdanım</h3>
+        <h3>💰 Cüzdan</h3>
         <div class="header-card">
-            <p>Çekilebilir Miktar</p>
+            <p>Bakiye</p>
             <h2 id="bakiye-wallet">0.00</h2>
         </div>
-        <div class="shop-card">
-            <input type="text" placeholder="TON Cüzdan Adresi" style="width:100%; background:#0f172a; border:1px solid #334155; color:white; padding:10px; border-radius:8px; box-sizing:border-box;">
-            <button class="btn" onclick="alert('Minimum 500.000 💎 gereklidir.')">Ödeme Al</button>
-        </div>
+        <button class="btn" onclick="alert('Yetersiz bakiye!')">Ödeme Al</button>
     </div>
 
     <div class="nav-bar">
@@ -108,59 +96,43 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // AYARLAR
         const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "test_user";
-        const botUser = "Sleepyton_bot"; // Buraya botunun tam kullanıcı adını yaz
+        const botUser = "Sleepyton_bot"; // Bot adını buraya yaz
         const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
 
         let state = { bakiye: 0, hiz: 0, refs: 0, lastSync: Date.now() };
 
-        // Linki Göster
         document.getElementById('ref-link-display').innerText = `https://t.me/${botUser}?start=${userId}`;
 
-        // Veri Yükle
-        function load(function load() {
-    // 1. Önce kimin geldiğine bak (URL'den ID'yi çek)
-    const urlParams = new URLSearchParams(window.location.search);
-    const invitedBy = urlParams.get('tgWebAppStartParam');
+        function load() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const invitedBy = urlParams.get('tgWebAppStartParam');
 
-    fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
-        if(data) {
-            state = data;
-        } else {
-            // EĞER KULLANICI YENİYSE (İLK KEZ GİRİYORSA)
-            if(invitedBy && invitedBy !== userId.toString()) {
-                // Davet edene ödül gönder
-                odulGonder(invitedBy);
-            }
-        }
-        update();
-    });
-}
-
-function odulGonder(inviterId) {
-    // Davet eden kişinin verilerini bul ve 1000 elmas ekle
-    fetch(`${dbURL}/users/${inviterId}.json`).then(r => r.json()).then(inviterData => {
-        if(inviterData) {
-            inviterData.bakiye += 1000;
-            inviterData.refs = (inviterData.refs || 0) + 1;
-            // Güncellenmiş veriyi Firebase'e geri yükle
-            fetch(`${dbURL}/users/${inviterId}.json`, { method: 'PUT', body: JSON.stringify(inviterData) });
-        }
-    });
-}
-) {
             fetch(`${dbURL}/users/${userId}.json`).then(r => r.json()).then(data => {
                 if(data) {
                     state = data;
                     let offTime = (Date.now() - state.lastSync) / 1000 / 3600;
                     if(offTime > 0 && state.hiz > 0) state.bakiye += (Math.min(offTime, 12) * state.hiz);
+                } else {
+                    // Yeni kullanıcıysa ve referansla geldiyse
+                    if(invitedBy && invitedBy !== userId.toString()) {
+                        giveRefAward(invitedBy);
+                    }
                 }
                 update();
             });
         }
 
-        // Veri Kaydet
+        function giveRefAward(inviterId) {
+            fetch(`${dbURL}/users/${inviterId}.json`).then(r => r.json()).then(inviterData => {
+                if(inviterData) {
+                    inviterData.bakiye += 1000;
+                    inviterData.refs = (inviterData.refs || 0) + 1;
+                    fetch(`${dbURL}/users/${inviterId}.json`, { method: 'PUT', body: JSON.stringify(inviterData) });
+                }
+            });
+        }
+
         function save() {
             state.lastSync = Date.now();
             fetch(`${dbURL}/users/${userId}.json`, { method: 'PUT', body: JSON.stringify(state) });
@@ -176,14 +148,13 @@ function odulGonder(inviterId) {
         function satinal(f, g) {
             if(state.bakiye >= f) {
                 state.bakiye -= f; state.hiz += g; update(); save();
-                alert("Başarıyla satın alındı!");
+                alert("Satın alındı!");
             } else alert("Yetersiz bakiye!");
         }
 
         function copyLink() {
-            const link = document.getElementById('ref-link-display').innerText;
-            navigator.clipboard.writeText(link);
-            alert("Davet linkin kopyalandı!");
+            navigator.clipboard.writeText(document.getElementById('ref-link-display').innerText);
+            alert("Kopyalandı!");
         }
 
         function update() {
@@ -193,11 +164,8 @@ function odulGonder(inviterId) {
             document.getElementById('ref-count').innerText = state.refs || 0;
         }
 
-        setInterval(() => {
-            if(state.hiz > 0) { state.bakiye += (state.hiz / 3600); update(); }
-        }, 1000);
-
-        setInterval(save, 15000); // 15 saniyede bir buluta yedekle
+        setInterval(() => { if(state.hiz > 0) { state.bakiye += (state.hiz / 3600); update(); } }, 1000);
+        setInterval(save, 15000);
         window.onload = load;
     </script>
 </body>
