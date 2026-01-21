@@ -3,73 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyTon - Official</title>
+    <title>SleepyTon - PRO</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { background: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 90px; user-select: none; }
         .page { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .header-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #38bdf8; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .dragon-img { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #38bdf8; margin: 15px auto; display: block; box-shadow: 0 0 20px rgba(56,189,248,0.2); }
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { color: #94a3b8; font-size: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
+        .header-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #38bdf8; text-align: center; }
+        .dragon-img { width: 150px; height: 150px; border-radius: 50%; border: 4px solid #38bdf8; margin: 10px auto; display: block; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
+        .nav-item { color: #94a3b8; font-size: 11px; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
         .nav-item.active-nav { color: #38bdf8; font-weight: bold; }
         .item-card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #334155; }
-        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
-        .bonus-btn { background: #f59e0b; margin-bottom: 15px; }
+        .btn { background: #38bdf8; color: #0f172a; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; }
+        .btn:disabled { background: #475569; cursor: not-allowed; }
         input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div id="page-mine" class="page active">
-        <button id="daily-btn" class="btn bonus-btn" onclick="claimDaily()">🎁 Günlük Bonus (500 💎)</button>
+        <button id="daily-btn" class="btn" style="background:#f59e0b; margin-bottom:15px;" onclick="claimDaily()">🎁 Günlük Bonus (500 💎)</button>
         <div class="header-card">
-            <h2 id="lvl-text" style="color:#38bdf8; margin:0 0 10px 0;">Level 1: Bebek</h2>
-            <div style="font-size: 34px; font-weight: bold;"><span id="bakiye">0.00</span> 💎</div>
-            <div style="color: #4ade80; margin-top:5px;">Hız: +<span id="hiz">0</span>/saat</div>
+            <h2 id="lvl-text" style="color:#38bdf8; margin:0;">Level 1</h2>
+            <div style="font-size: 32px; font-weight: bold; margin:10px 0;"><span id="bakiye">0.00</span> 💎</div>
+            <div style="color: #4ade80;">Hız: +<span id="hiz">0</span>/saat</div>
         </div>
         <img id="dragon-pic" src="https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration_138676-3918.jpg" class="dragon-img">
     </div>
 
     <div id="page-shop" class="page">
-        <h3 style="color:#38bdf8;">🏪 Ejderha Marketi</h3>
+        <h3>🛒 Market</h3>
         <div class="item-card">
-            <h4>🥚 Bebek Ejderha</h4>
-            <p>Fiyat: 100 💎 | Hız: +10/saat</p>
+            <h4>🐣 Bebek Ejderha</h4>
+            <p>100 💎 | +10/saat</p>
             <button class="btn" onclick="satinal(100, 10)">Satın Al</button>
         </div>
         <div class="item-card">
-            <h4>🐲 Yeşil Ejderha</h4>
-            <p>Fiyat: 1.000 💎 | Hız: +150/saat</p>
+            <h4>🐲 Yetişkin Ejderha</h4>
+            <p>1.000 💎 | +150/saat</p>
             <button class="btn" onclick="satinal(1000, 150)">Satın Al</button>
         </div>
     </div>
 
     <div id="page-ref" class="page">
-        <h3 style="color:#38bdf8;">👥 Arkadaşlarını Davet Et</h3>
+        <h3>👥 Davet Et</h3>
         <div class="header-card">
-            <p style="font-size:12px; color:#94a3b8;">Her davet için 1.000 💎 kazanırsın!</p>
-            <p id="ref-link-box" style="font-size:10px; background:#0f172a; padding:10px; border-radius:8px; word-break:break-all; border:1px dashed #38bdf8;"></p>
+            <p id="ref-link-box" style="font-size:10px; background:#000; padding:10px; border-radius:8px; word-break:break-all;"></p>
             <button class="btn" style="margin-top:10px;" onclick="copyLink()">Linki Kopyala</button>
         </div>
-        <div id="friend-list">
-            <p style="text-align:center; color:#94a3b8;">Davet listesi yükleniyor...</p>
-        </div>
+        <div id="friend-list"></div>
     </div>
 
     <div id="page-wallet" class="page">
-        <h3 style="color:#38bdf8;">💰 Cüzdan</h3>
+        <h3>💰 Cüzdan & Çekim</h3>
         <div class="header-card">
-            <p style="color:#94a3b8; margin:0;">Mevcut Bakiyen</p>
-            <h2 id="bakiye-wallet" style="font-size:32px; margin:10px 0;">0.00</h2>
-            <p style="font-size:11px; color:#f87171;">Minimum Çekim: 100.000 💎</p>
+            <p>Bakiyeniz</p>
+            <h2 id="bakiye-wallet">0.00</h2>
+            <p style="font-size:11px; color:#94a3b8;">Min Çekim: 100.000 💎</p>
         </div>
         <div class="item-card">
-            <input type="text" id="wallet-addr" placeholder="TON Cüzdan Adresi">
-            <button class="btn" onclick="alert('Bakiyeniz henüz çekim için yeterli değil!')">💎 Çekim Talebi Oluştur</button>
+            <input type="text" id="wallet-addr" placeholder="TON Adresiniz (UQ...)">
+            <button id="withdraw-btn" class="btn" onclick="talepGonder()">💎 Talep Gönder</button>
         </div>
     </div>
 
@@ -82,13 +78,11 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        
         const userId = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "test_user";
-        const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Ejderha Binicisi";
+        const userName = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Oyuncu";
         const dbURL = "https://sleepyton-3b15d-default-rtdb.europe-west1.firebasedatabase.app/";
         
-        let state = { bakiye: 0, hiz: 0, lastSync: Date.now(), lastDaily: 0, name: userName, friends: [] };
+        let state = { bakiye: 0, hiz: 0, lastSync: Date.now(), lastDaily: 0, friends: [] };
 
         document.getElementById('ref-link-box').innerText = `https://t.me/Sleepyton_bot?start=${userId}`;
 
@@ -98,75 +92,63 @@
                     state = {...state, ...data};
                     let offTime = (Date.now() - state.lastSync) / 1000 / 3600;
                     if(offTime > 0 && state.hiz > 0) state.bakiye += (Math.min(offTime, 12) * state.hiz);
-                } else {
-                    checkReferral();
-                }
-                update();
-                checkDailyStatus();
+                } else { checkReferral(); }
+                update(); checkDailyStatus();
             });
         }
 
         function checkReferral() {
-            const params = new URLSearchParams(window.location.search);
-            const refId = params.get('tgWebAppStartParam');
-            if(refId && refId !== userId.toString()) {
-                fetch(`${dbURL}/users/${refId}.json`).then(r => r.json()).then(inviter => {
-                    if(inviter) {
-                        inviter.bakiye = (inviter.bakiye || 0) + 1000;
-                        if(!inviter.friends) inviter.friends = [];
-                        inviter.friends.push(userName);
-                        fetch(`${dbURL}/users/${refId}.json`, { method: 'PUT', body: JSON.stringify(inviter) });
+            const p = new URLSearchParams(window.location.search);
+            const rId = p.get('tgWebAppStartParam');
+            if(rId && rId !== userId.toString()) {
+                fetch(`${dbURL}/users/${rId}.json`).then(r => r.json()).then(inv => {
+                    if(inv) {
+                        inv.bakiye += 1000;
+                        if(!inv.friends) inv.friends = [];
+                        inv.friends.push(userName);
+                        fetch(`${dbURL}/users/${rId}.json`, { method: 'PUT', body: JSON.stringify(inv) });
                     }
                 });
-                state.bakiye = 500; // Yeni gelene ödül
+                state.bakiye = 500;
             }
         }
 
-        function satinal(fiyat, artis) {
-            if (state.bakiye >= fiyat) {
-                state.bakiye -= fiyat;
-                state.hiz += artis;
-                update();
-                save();
-                alert("🛒 Başarıyla satın alındı!");
-            } else {
-                alert("❌ Yetersiz bakiye! Biraz daha kazmalısın.");
-            }
+        function talepGonder() {
+            const addr = document.getElementById('wallet-addr').value;
+            if(addr.length < 10) return alert("Geçersiz TON adresi!");
+            if(state.bakiye < 100000) return alert("Yetersiz bakiye (Min 100k)!");
+
+            const talep = { userId, userName, addr, miktar: state.bakiye, tarih: new Date().toLocaleString() };
+            fetch(`${dbURL}/talepler/${userId}.json`, { method: 'PUT', body: JSON.stringify(talep) }).then(() => {
+                state.bakiye = 0; save(); update();
+                alert("✅ Talebiniz alındı! İncelenip ödemeniz yapılacaktır.");
+            });
         }
 
-        function claimDaily() {
-            const now = Date.now();
-            if(now - state.lastDaily > 86400000) {
-                state.bakiye += 500;
-                state.lastDaily = now;
-                save(); update(); checkDailyStatus();
-                alert("🎁 Günlük bonusun (500 💎) eklendi!");
-            }
-        }
-
-        function checkDailyStatus() {
-            if(Date.now() - state.lastDaily < 86400000) {
-                document.getElementById('daily-btn').style.display = "none";
-            }
+        function satinal(f, a) {
+            if(state.bakiye >= f) {
+                state.bakiye -= f; state.hiz += a;
+                update(); save(); alert("Satın alma başarılı!");
+            } else alert("Yetersiz elmas!");
         }
 
         function update() {
             document.getElementById('bakiye').innerText = state.bakiye.toFixed(2);
             document.getElementById('bakiye-wallet').innerText = state.bakiye.toFixed(2);
             document.getElementById('hiz').innerText = state.hiz;
-            
-            let lvl = 1; let img = "https://img.freepik.com/free-vector/cute-dragon-sleeping-cartoon-vector-icon-illustration_138676-3918.jpg";
-            if(state.bakiye > 5000) { lvl = 2; img = "https://img.freepik.com/free-vector/cute-dragon-flying-cartoon-vector-icon-illustration_138676-2131.jpg"; }
-            if(state.bakiye > 25000) { lvl = 3; img = "https://img.freepik.com/free-vector/dragon-fire-cartoon-vector-icon-illustration_138676-3831.jpg"; }
-            
-            document.getElementById('lvl-text').innerText = `Level ${lvl}: Ejderha`;
-            document.getElementById('dragon-pic').src = img;
+            document.getElementById('lvl-text').innerText = state.bakiye > 5000 ? "Level 2: Ejderha" : "Level 1: Bebek";
+            if(state.friends) document.getElementById('friend-list').innerHTML = state.friends.map(f => `<div class="item-card">👤 ${f}</div>`).join('');
+        }
 
-            if(state.friends && state.friends.length > 0) {
-                document.getElementById('friend-list').innerHTML = state.friends.map(f => `<div class="item-card" style="margin-bottom:5px;">👤 ${f}</div>`).join('');
-            } else {
-                document.getElementById('friend-list').innerHTML = `<p style="text-align:center; color:#94a3b8; font-size:12px;">Henüz kimseyi davet etmedin.</p>`;
+        function claimDaily() {
+            if(Date.now() - state.lastDaily > 86400000) {
+                state.bakiye += 500; state.lastDaily = Date.now();
+                save(); update(); checkDailyStatus(); alert("500 💎 Alındı!");
             }
+        }
+
+        function checkDailyStatus() {
+            if(Date.now() - state.lastDaily < 86400000) document.getElementById('daily-btn').style.display = "none";
         }
 
         function save() {
@@ -182,13 +164,9 @@
         }
 
         function copyLink() {
-            const el = document.createElement('textarea');
-            el.value = document.getElementById('ref-link-box').innerText;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            alert("✅ Davet linki kopyalandı!");
+            const t = document.createElement('textarea'); t.value = document.getElementById('ref-link-box').innerText;
+            document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+            alert("Kopyalandı!");
         }
 
         setInterval(() => { if(state.hiz > 0) { state.bakiye += (state.hiz/3600); update(); } }, 1000);
